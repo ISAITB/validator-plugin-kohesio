@@ -1,4 +1,4 @@
-# CSV validator for the Kohesio validator
+# CSV validator plugin for the Kohesio validator
 
 This is a validator plugin for the Kohesio validator.
 
