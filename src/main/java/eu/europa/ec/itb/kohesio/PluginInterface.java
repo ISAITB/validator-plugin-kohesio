@@ -103,7 +103,7 @@ public class PluginInterface implements ValidationService {
                 }
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Error while reading input file in plugin", e);
+            throw new IllegalStateException(e);
         }
         ValidationResponse response = new ValidationResponse();
         response.setReport(toTAR(errors));

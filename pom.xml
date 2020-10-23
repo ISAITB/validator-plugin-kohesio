@@ -12,7 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.assemblyPlugin>3.3.0</version.assemblyPlugin>
         <version.compilerPlugin>3.8.1</version.compilerPlugin>
-        <version.gitbTypes>1.10.1</version.gitbTypes>
+        <version.gitbTypes>1.10.2</version.gitbTypes>
         <version.commonsCsv>1.8</version.commonsCsv>
     </properties>
 
