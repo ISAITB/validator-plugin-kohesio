@@ -33,7 +33,10 @@ public class LocationIndicatorRule implements Rule {
     public void validate(CSVRecord record, long lineNumber, List<ReportItem> aggregatedErrors) {
         boolean valueDefined = false;
         for (String fieldToCheck: fieldsToCheck) {
-            String value = record.get(fieldToCheck);
+            String value = null;
+            if (record.isSet(fieldToCheck)) {
+                value = record.get(fieldToCheck);
+            }
             if (value != null && !value.isBlank()) {
                 valueDefined = true;
                 break;

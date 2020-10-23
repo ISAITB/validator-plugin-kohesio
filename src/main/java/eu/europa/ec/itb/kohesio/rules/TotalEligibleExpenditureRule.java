@@ -27,11 +27,16 @@ public class TotalEligibleExpenditureRule implements Rule {
 
     @Override
     public void validate(CSVRecord record, long lineNumber, List<ReportItem> aggregatedErrors) {
-        String currency = record.get(EXCHANGE_CURRENCY);
-        if (currency != null && !currency.isBlank() && !CURRENCIES_WITH_OPTIONAL_RATE.contains(currency)) {
-            String rate = record.get(EXCHANGE_RATE);
-            if (rate == null || rate.isBlank()) {
-                aggregatedErrors.add(new ReportItem(String.format("The total eligible expenditure exchange rate is required for the provided currency '%s'.", currency), EXCHANGE_RATE, lineNumber, null, ViolationLevel.ERROR));
+        if (record.isSet(EXCHANGE_CURRENCY)) {
+            String currency = record.get(EXCHANGE_CURRENCY);
+            if (currency != null && !currency.isBlank() && !CURRENCIES_WITH_OPTIONAL_RATE.contains(currency)) {
+                String rate = null;
+                if (record.isSet(EXCHANGE_RATE)) {
+                    rate = record.get(EXCHANGE_RATE);
+                }
+                if (rate == null || rate.isBlank()) {
+                    aggregatedErrors.add(new ReportItem(String.format("The total eligible expenditure exchange rate is required for the provided currency '%s'.", currency), EXCHANGE_RATE, lineNumber, null, ViolationLevel.ERROR));
+                }
             }
         }
     }

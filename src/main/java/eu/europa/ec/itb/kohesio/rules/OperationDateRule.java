@@ -27,11 +27,13 @@ public class OperationDateRule implements Rule {
 
     @Override
     public void validate(CSVRecord record, long lineNumber, List<ReportItem> aggregatedErrors) {
-        String startDateStr = record.get(OPERATION_START_DATE);
-        LocalDate startDate = parseDate(startDateStr);
-        LocalDate endDate = parseDate(record.get(OPERATION_END_DATE));
-        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
-            aggregatedErrors.add(new ReportItem(String.format("The operation start date '%s' must be before the operation end date '%s'.", DATE_FORMATTER.format(startDate), DATE_FORMATTER.format(endDate)), OPERATION_START_DATE, lineNumber, startDateStr, ViolationLevel.ERROR));
+        if (record.isSet(OPERATION_START_DATE) && record.isSet(OPERATION_END_DATE)) {
+            String startDateStr = record.get(OPERATION_START_DATE);
+            LocalDate startDate = parseDate(startDateStr);
+            LocalDate endDate = parseDate(record.get(OPERATION_END_DATE));
+            if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
+                aggregatedErrors.add(new ReportItem(String.format("The operation start date '%s' must be before the operation end date '%s'.", DATE_FORMATTER.format(startDate), DATE_FORMATTER.format(endDate)), OPERATION_START_DATE, lineNumber, startDateStr, ViolationLevel.ERROR));
+            }
         }
     }
 
