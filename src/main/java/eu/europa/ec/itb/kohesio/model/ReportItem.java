@@ -38,9 +38,9 @@ public class ReportItem {
      */
     public String getReportMessage() {
         if (fieldName == null) {
-            return String.format("[%s]: %s", lineNumber, getMessage());
+            return String.format("[Row: %s]: %s", lineNumber, getMessage());
         } else {
-            return String.format("[%s][%s]: %s", lineNumber, fieldName, getMessage());
+            return String.format("[Row: %s][Field: %s]: %s", lineNumber, fieldName, getMessage());
         }
     }
 
