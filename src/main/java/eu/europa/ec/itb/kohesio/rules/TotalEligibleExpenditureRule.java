@@ -1,11 +1,11 @@
 package eu.europa.ec.itb.kohesio.rules;
 
+import eu.europa.ec.itb.kohesio.ViolationReporter;
 import eu.europa.ec.itb.kohesio.model.ReportItem;
 import eu.europa.ec.itb.kohesio.model.ViolationLevel;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -26,7 +26,7 @@ public class TotalEligibleExpenditureRule implements Rule {
     }
 
     @Override
-    public void validate(CSVRecord record, long lineNumber, List<ReportItem> aggregatedErrors) {
+    public void validate(CSVRecord record, long lineNumber, ViolationReporter reporter) {
         if (record.isSet(EXCHANGE_CURRENCY)) {
             String currency = record.get(EXCHANGE_CURRENCY);
             if (currency != null && !currency.isBlank() && !CURRENCIES_WITH_OPTIONAL_RATE.contains(currency)) {
@@ -35,7 +35,7 @@ public class TotalEligibleExpenditureRule implements Rule {
                     rate = record.get(EXCHANGE_RATE);
                 }
                 if (rate == null || rate.isBlank()) {
-                    aggregatedErrors.add(new ReportItem(String.format("The total eligible expenditure exchange rate is required for the provided currency '%s'.", currency), EXCHANGE_RATE, lineNumber, null, ViolationLevel.ERROR));
+                    reporter.record(new ReportItem(String.format("The total eligible expenditure exchange rate is required for the provided currency '%s'.", currency), EXCHANGE_RATE, lineNumber, null, ViolationLevel.ERROR));
                 }
             }
         }

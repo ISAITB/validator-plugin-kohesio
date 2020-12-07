@@ -7,6 +7,7 @@ import com.gitb.tr.*;
 import com.gitb.vs.Void;
 import com.gitb.vs.*;
 import eu.europa.ec.itb.kohesio.model.ReportItem;
+import eu.europa.ec.itb.kohesio.model.ViolationLevel;
 import eu.europa.ec.itb.kohesio.rules.LocationIndicatorRule;
 import eu.europa.ec.itb.kohesio.rules.OperationDateRule;
 import eu.europa.ec.itb.kohesio.rules.Rule;
@@ -41,6 +42,7 @@ public class PluginInterface implements ValidationService {
     private static final String INPUT__CONTENT_TO_VALIDATE = "contentToValidate";
     private static final String INPUT__QUOTE = "quote";
     private static final String INPUT__DELIMITER = "delimiter";
+    private static final long MAXIMUM_REPORT_ITEMS = 50000L;
 
     private final ObjectFactory objectFactory = new ObjectFactory();
 
@@ -78,7 +80,22 @@ public class PluginInterface implements ValidationService {
                 .withQuote(quote)
                 .withHeader();
         // Read the CSV file's records and validate each row.
+        final long[] counterErrors = {0L};
+        final long[] counterWarnings = {0L};
+        final long[] counterInformationMessages = {0L};
         List<ReportItem> errors = new ArrayList<>();
+        ViolationReporter reporter = (reportItem) -> {
+            if (reportItem.getViolationLevel() == ViolationLevel.ERROR) {
+                counterErrors[0] += 1;
+            } else if (reportItem.getViolationLevel() == ViolationLevel.WARNING) {
+                counterWarnings[0] += 1;
+            } else if (reportItem.getViolationLevel() == ViolationLevel.INFO) {
+                counterInformationMessages[0] += 1;
+            }
+            if (errors.size() < MAXIMUM_REPORT_ITEMS) {
+                errors.add(reportItem);
+            }
+        };
         try {
             try (
                     Reader inputReader = new BomStrippingReader(Files.newInputStream(Path.of(inputFilePath)));
@@ -97,7 +114,7 @@ public class PluginInterface implements ValidationService {
                     }
                     // Call all rules for the parsed record.
                     for (Rule rule: rulesToCheck) {
-                        rule.validate(record, reportedLineNumber, errors);
+                        rule.validate(record, reportedLineNumber, reporter);
                     }
                     previousLineNumber = reportedLineNumber;
                 }
@@ -106,7 +123,7 @@ public class PluginInterface implements ValidationService {
             throw new IllegalStateException(e);
         }
         ValidationResponse response = new ValidationResponse();
-        response.setReport(toTAR(errors));
+        response.setReport(toTAR(errors, counterErrors[0], counterWarnings[0], counterInformationMessages[0]));
         return response;
     }
 
@@ -131,17 +148,12 @@ public class PluginInterface implements ValidationService {
      * @param errorMessages The error messages to consider.
      * @return The plugin report.
      */
-    private TAR toTAR(List<ReportItem> errorMessages) {
+    private TAR toTAR(List<ReportItem> errorMessages, long counterErrors, long counterWarnings, long counterInformationMessages) {
         TAR report = new TAR();
         report.setDate(getXMLGregorianCalendarDateTime());
         report.setCounters(new ValidationCounters());
-        report.getCounters().setNrOfWarnings(BigInteger.ZERO);
-        report.getCounters().setNrOfAssertions(BigInteger.ZERO);
         report.setReports(new TestAssertionGroupReportsType());
         report.setContext(new AnyContent());
-        long errors = 0;
-        long warnings = 0;
-        long infos = 0;
         if (errorMessages != null) {
             for (ReportItem errorMessage : errorMessages) {
                 BAR error = new BAR();
@@ -151,15 +163,12 @@ public class PluginInterface implements ValidationService {
                 switch (errorMessage.getViolationLevel()) {
                     case ERROR:
                         report.getReports().getInfoOrWarningOrError().add(objectFactory.createTestAssertionGroupReportsTypeError(error));
-                        errors += 1;
                         break;
                     case WARNING:
                         report.getReports().getInfoOrWarningOrError().add(objectFactory.createTestAssertionGroupReportsTypeWarning(error));
-                        warnings += 1;
                         break;
                     case INFO:
                         report.getReports().getInfoOrWarningOrError().add(objectFactory.createTestAssertionGroupReportsTypeInfo(error));
-                        infos += 1;
                         break;
                     case NONE:
                         // Nothing.
@@ -167,16 +176,16 @@ public class PluginInterface implements ValidationService {
                 }
             }
         }
-        if (errors > 0) {
+        if (counterErrors > 0) {
             report.setResult(TestResultType.FAILURE);
-        } else if (warnings > 0) {
+        } else if (counterWarnings > 0) {
             report.setResult(TestResultType.WARNING);
         } else {
             report.setResult(TestResultType.SUCCESS);
         }
-        report.getCounters().setNrOfErrors(BigInteger.valueOf(errors));
-        report.getCounters().setNrOfWarnings(BigInteger.valueOf(warnings));
-        report.getCounters().setNrOfAssertions(BigInteger.valueOf(infos));
+        report.getCounters().setNrOfErrors(BigInteger.valueOf(counterErrors));
+        report.getCounters().setNrOfWarnings(BigInteger.valueOf(counterWarnings));
+        report.getCounters().setNrOfAssertions(BigInteger.valueOf(counterInformationMessages));
         return report;
     }
 

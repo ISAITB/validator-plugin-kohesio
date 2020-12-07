@@ -1,10 +1,8 @@
 package eu.europa.ec.itb.kohesio.rules;
 
-import eu.europa.ec.itb.kohesio.model.ReportItem;
+import eu.europa.ec.itb.kohesio.ViolationReporter;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-
-import java.util.List;
 
 /**
  * Common interface for validation rules.
@@ -29,8 +27,8 @@ public interface Rule {
      *
      * @param record The record to validate.
      * @param lineNumber The line number to consider when reporting errors.
-     * @param aggregatedErrors The currently aggregated errors to which new ones should be added.
+     * @param reporter The class responsible of recording report items.
      */
-    void validate(CSVRecord record, long lineNumber, List<ReportItem> aggregatedErrors);
+    void validate(CSVRecord record, long lineNumber, ViolationReporter reporter);
 
 }

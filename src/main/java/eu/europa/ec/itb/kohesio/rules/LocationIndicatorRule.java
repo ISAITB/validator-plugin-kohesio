@@ -1,5 +1,6 @@
 package eu.europa.ec.itb.kohesio.rules;
 
+import eu.europa.ec.itb.kohesio.ViolationReporter;
 import eu.europa.ec.itb.kohesio.model.ReportItem;
 import eu.europa.ec.itb.kohesio.model.ViolationLevel;
 import org.apache.commons.csv.CSVParser;
@@ -30,7 +31,7 @@ public class LocationIndicatorRule implements Rule {
     }
 
     @Override
-    public void validate(CSVRecord record, long lineNumber, List<ReportItem> aggregatedErrors) {
+    public void validate(CSVRecord record, long lineNumber, ViolationReporter reporter) {
         boolean valueDefined = false;
         for (String fieldToCheck: fieldsToCheck) {
             String value = null;
@@ -43,7 +44,7 @@ public class LocationIndicatorRule implements Rule {
             }
         }
         if (!valueDefined) {
-            aggregatedErrors.add(new ReportItem(String.format("At least one of the location indicator fields %s must be provided.", fieldsToCheck), null, lineNumber, null, ViolationLevel.ERROR));
+            reporter.record(new ReportItem(String.format("At least one of the location indicator fields %s must be provided.", fieldsToCheck), null, lineNumber, null, ViolationLevel.ERROR));
         }
     }
 

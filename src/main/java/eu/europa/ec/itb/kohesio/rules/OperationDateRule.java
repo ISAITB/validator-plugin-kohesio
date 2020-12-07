@@ -1,5 +1,6 @@
 package eu.europa.ec.itb.kohesio.rules;
 
+import eu.europa.ec.itb.kohesio.ViolationReporter;
 import eu.europa.ec.itb.kohesio.model.ReportItem;
 import eu.europa.ec.itb.kohesio.model.ViolationLevel;
 import org.apache.commons.csv.CSVParser;
@@ -8,7 +9,6 @@ import org.apache.commons.csv.CSVRecord;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
 
 /**
  * Rule to check that the operation start date is always before the operation end date.
@@ -26,13 +26,13 @@ public class OperationDateRule implements Rule {
     }
 
     @Override
-    public void validate(CSVRecord record, long lineNumber, List<ReportItem> aggregatedErrors) {
+    public void validate(CSVRecord record, long lineNumber, ViolationReporter reporter) {
         if (record.isSet(OPERATION_START_DATE) && record.isSet(OPERATION_END_DATE)) {
             String startDateStr = record.get(OPERATION_START_DATE);
             LocalDate startDate = parseDate(startDateStr);
             LocalDate endDate = parseDate(record.get(OPERATION_END_DATE));
             if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
-                aggregatedErrors.add(new ReportItem(String.format("The operation start date '%s' must be before the operation end date '%s'.", DATE_FORMATTER.format(startDate), DATE_FORMATTER.format(endDate)), OPERATION_START_DATE, lineNumber, startDateStr, ViolationLevel.ERROR));
+                reporter.record(new ReportItem(String.format("The operation start date '%s' must be before the operation end date '%s'.", DATE_FORMATTER.format(startDate), DATE_FORMATTER.format(endDate)), OPERATION_START_DATE, lineNumber, startDateStr, ViolationLevel.ERROR));
             }
         }
     }
