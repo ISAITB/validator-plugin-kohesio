@@ -10,17 +10,20 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.assemblyPlugin>3.3.0</version.assemblyPlugin>
-        <version.compilerPlugin>3.8.1</version.compilerPlugin>
-        <version.gitbTypes>1.10.2</version.gitbTypes>
-        <version.commonsCsv>1.8</version.commonsCsv>
+        <!-- Library versions -->
+        <version.gitbTypes>1.24.4</version.gitbTypes>
+        <version.commonsCsv>1.13.0</version.commonsCsv>
+        <!-- Plugin versions -->
+        <version.plugin.mavenAssemblyPlugin>3.3.0</version.plugin.mavenAssemblyPlugin>
+        <version.plugin.mavenCompilerPlugin>3.8.1</version.plugin.mavenCompilerPlugin>
+        <version.plugin.dependencyCheckPlugin>12.0.1</version.plugin.dependencyCheckPlugin>
     </properties>
 
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>${version.assemblyPlugin}</version>
+                <version>${version.plugin.mavenAssemblyPlugin}</version>
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -38,11 +41,34 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${version.compilerPlugin}</version>
+                <version>${version.plugin.mavenCompilerPlugin}</version>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${version.plugin.dependencyCheckPlugin}</version>
+                <configuration>
+                    <nvdApiServerId>nvdApi</nvdApiServerId>
+                    <failBuildOnCVSS>0</failBuildOnCVSS>
+                    <nodeAnalyzerEnabled>false</nodeAnalyzerEnabled>
+                    <retireJsAnalyzerEnabled>false</retireJsAnalyzerEnabled>
+                    <nodeAuditAnalyzerEnabled>false</nodeAuditAnalyzerEnabled>
+                    <ossIndexWarnOnlyOnRemoteErrors>true</ossIndexWarnOnlyOnRemoteErrors>
+                    <suppressionFiles>
+                        <!-- Specific suppressions linked to the current project. -->
+                        <suppressionFile>etc/owasp-suppressions.xml</suppressionFile>
+                    </suppressionFiles>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>none</phase>
+                        <!-- Run manually with mvn dependency-check:aggregate -->
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <finalName>validator-plugin-kohesio</finalName>
