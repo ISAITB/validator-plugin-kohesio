@@ -11,12 +11,12 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Library versions -->
-        <version.gitbTypes>1.24.4</version.gitbTypes>
+        <version.gitbTypes>1.25.1</version.gitbTypes>
         <version.commonsCsv>1.13.0</version.commonsCsv>
         <!-- Plugin versions -->
         <version.plugin.mavenAssemblyPlugin>3.3.0</version.plugin.mavenAssemblyPlugin>
         <version.plugin.mavenCompilerPlugin>3.8.1</version.plugin.mavenCompilerPlugin>
-        <version.plugin.dependencyCheckPlugin>12.0.1</version.plugin.dependencyCheckPlugin>
+        <version.plugin.dependencyCheckPlugin>12.1.0</version.plugin.dependencyCheckPlugin>
     </properties>
 
     <build>
