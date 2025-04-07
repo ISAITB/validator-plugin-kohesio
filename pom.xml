@@ -16,7 +16,7 @@
         <!-- Plugin versions -->
         <version.plugin.mavenAssemblyPlugin>3.3.0</version.plugin.mavenAssemblyPlugin>
         <version.plugin.mavenCompilerPlugin>3.8.1</version.plugin.mavenCompilerPlugin>
-        <version.plugin.dependencyCheckPlugin>12.1.0</version.plugin.dependencyCheckPlugin>
+        <version.plugin.dependencyCheckPlugin>12.1.1</version.plugin.dependencyCheckPlugin>
     </properties>
 
     <build>
