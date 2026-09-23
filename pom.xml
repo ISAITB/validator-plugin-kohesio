@@ -16,12 +16,39 @@
         <version.gitbTypes>1.25.1</version.gitbTypes>
         <version.commonsCsv>1.13.0</version.commonsCsv>
         <!-- Plugin versions -->
-        <version.plugin.mavenAssemblyPlugin>3.3.0</version.plugin.mavenAssemblyPlugin>
-        <version.plugin.mavenCompilerPlugin>3.8.1</version.plugin.mavenCompilerPlugin>
-        <version.plugin.dependencyCheckPlugin>12.1.7</version.plugin.dependencyCheckPlugin>
+        <version.plugin.mavenAssemblyPlugin>3.8.0</version.plugin.mavenAssemblyPlugin>
+        <version.plugin.mavenCompilerPlugin>3.15.0</version.plugin.mavenCompilerPlugin>
+        <version.plugin.dependencyCheckPlugin>12.2.2</version.plugin.dependencyCheckPlugin>
+        <version.plugin.cycloneDxPlugin>2.9.3</version.plugin.cycloneDxPlugin>
     </properties>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.cyclonedx</groupId>
+                    <artifactId>cyclonedx-maven-plugin</artifactId>
+                    <version>${version.plugin.cycloneDxPlugin}</version>
+                    <configuration>
+                        <projectType>application</projectType>
+                        <schemaVersion>1.6</schemaVersion>
+                        <outputFormat>json</outputFormat>
+                        <includeBomSerialNumber>false</includeBomSerialNumber>
+                        <includeTestScope>false</includeTestScope>
+                        <includeProvidedScope>true</includeProvidedScope>
+                        <skipNotDeployed>false</skipNotDeployed>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>none</phase>
+                            <!--
+                                Run manually with `mvn cyclonedx:makeAggregateBom`
+                            -->
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -73,6 +100,10 @@
                         <!-- Run manually with mvn dependency-check:aggregate -->
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.cyclonedx</groupId>
+                <artifactId>cyclonedx-maven-plugin</artifactId>
             </plugin>
         </plugins>
         <finalName>validator-plugin-kohesio</finalName>
