@@ -30,7 +30,7 @@
                     <artifactId>cyclonedx-maven-plugin</artifactId>
                     <version>${version.plugin.cycloneDxPlugin}</version>
                     <configuration>
-                        <projectType>application</projectType>
+                        <projectType>library</projectType>
                         <schemaVersion>1.6</schemaVersion>
                         <outputFormat>json</outputFormat>
                         <includeBomSerialNumber>false</includeBomSerialNumber>
